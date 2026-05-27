@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<title>Registro Técnico</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:         #f0f2f5;
+    --surface:    #ffffff;
+    --border:     #d1d5db;
+    --border-lt:  #e5e7eb;
+    --accent:     #1a3d6b;
+    --accent-mid: #2155a0;
+    --accent-lt:  #e8eef7;
+    --success:    #166534;
+    --success-bg: #dcfce7;
+    --error:      #991b1b;
+    --error-bg:   #fee2e2;
+    --text:       #111827;
+    --muted:      #6b7280;
+    --subtle:     #9ca3af;
+    --radius:     10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    padding-bottom: 40px;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+  }
+
+  .topbar { background: var(--accent); height: 4px; width: 100%; }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px 12px;
+    text-align: center;
+    margin-bottom: 12px;
+    width: 100%;
+  }
+  header .badge {
+    display: inline-block;
+    background: var(--accent-lt);
+    color: var(--accent);
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 2px;
+    margin-bottom: 7px; border: 1px solid #c3d3ea;
+  }
+  header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--accent); line-height: 1.2;
+  }
+  header p { margin-top: 5px; color: var(--muted); font-size: 13px; }
+
+  .steps {
+    display: flex;
+    align-items: flex-start;
+    padding: 14px 8px 12px;
+    width: 100%;
+  }
+  .step { flex: 1; display: flex; flex-direction: column; align-items: center; min-width: 0; }
+  .step-line { flex: 0 0 1px; flex-grow: 1; height: 2px; background: var(--border); margin-top: 17px; }
+  .step-line.done { background: var(--success); }
+  .step-dot {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 2px solid var(--border); background: #fff;
+    color: var(--subtle);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 700;
+    transition: background .3s, border-color .3s;
+    flex-shrink: 0;
+  }
+  .step.active .step-dot { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .step.done   .step-dot { background: var(--success); border-color: var(--success); color: #fff; font-size: 17px; }
+  .step-label {
+    font-size: 10px; color: var(--subtle); margin-top: 5px;
+    text-transform: uppercase; letter-spacing: 1px; font-weight: 700;
+    text-align: center;
+  }
+  .step.active .step-label { color: var(--accent); }
+  .step.done   .step-label { color: var(--success); }
+
+  .card {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 16px;
+    margin-bottom: 10px;
+    width: 100%;
+  }
+  .card-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 18px; font-weight: 700; color: var(--accent);
+    padding-bottom: 10px; border-bottom: 2px solid var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .field { margin-bottom: 18px; }
+  label {
+    display: block; font-size: 11px; font-weight: 700;
+    color: var(--muted); text-transform: uppercase;
+    letter-spacing: .8px; margin-bottom: 7px;
+  }
+  .hint { font-size: 11px; color: var(--muted); text-transform: none; letter-spacing: 0; font-weight: 400; }
+
+  select, input[type="text"], input[type="month"], textarea {
+    width: 100%;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 15px;
+    padding: 14px;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    max-width: 100%;
+  }
+  select:focus, input:focus, textarea:focus {
+    border-color: var(--accent-mid);
+    box-shadow: 0 0 0 3px rgba(33,85,160,.12);
+  }
+  textarea { resize: vertical; min-height: 90px; }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b7280' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+
+  .radio-group, .check-group { display: flex; flex-direction: column; gap: 8px; }
+  .radio-item, .check-item {
+    display: flex; align-items: center; gap: 12px;
+    background: #f9fafb; border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px;
+    cursor: pointer; font-size: 15px; min-height: 54px;
+    transition: border-color .15s, background .15s;
+    width: 100%;
+  }
+  .radio-item:has(input:checked),
+  .check-item:has(input:checked) {
+    border-color: var(--accent-mid);
+    background: var(--accent-lt); color: var(--accent); font-weight: 600;
+  }
+  .radio-item input, .check-item input {
+    width: 20px; height: 20px; flex-shrink: 0; accent-color: var(--accent-mid);
+  }
+
+  .info-grid {
+    display: grid; grid-template-columns: 1fr;
+    border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; margin-bottom: 4px;
+    width: 100%;
+  }
+  .info-cell { padding: 11px 14px; border-bottom: 1px solid var(--border-lt); background: #f9fafb; }
+  .info-cell:last-child { border-bottom: none; }
+  .inf-label { font-size: 10px; color: var(--subtle); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; font-weight: 700; }
+  .inf-val { font-size: 15px; font-weight: 500; color: var(--text); }
+
+  .reg-card {
+    border: 1px solid var(--border-lt); border-radius: var(--radius);
+    margin-bottom: 10px; overflow: hidden; width: 100%;
+  }
+  .reg-card-head {
+    background: #f9fafb; padding: 11px 14px;
+    border-bottom: 1px solid var(--border-lt);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .badge-id {
+    background: var(--accent-lt); color: var(--accent);
+    border: 1px solid #c3d3ea; border-radius: 4px;
+    padding: 3px 9px; font-weight: 700; font-size: 13px;
+  }
+  .reg-fecha { font-size: 12px; color: var(--subtle); }
+  .reg-card-body { padding: 12px 14px; }
+  .reg-empresa { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .reg-dir { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: 'Source Sans 3', sans-serif; font-weight: 700; font-size: 17px;
+    padding: 15px 20px; border-radius: var(--radius); border: none;
+    cursor: pointer; min-height: 54px; width: 100%;
+    transition: background .15s, transform .1s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn:active { transform: scale(.98); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:active { background: var(--accent-mid); }
+  .btn-ghost {
+    background: #fff; border: 1px solid var(--border);
+    color: var(--muted); font-size: 15px; font-weight: 600;
+  }
+  .btn-completar {
+    background: var(--accent); color: #fff;
+    border: none; border-radius: 8px;
+    padding: 13px; font-size: 15px; font-weight: 700;
+    width: 100%; cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    display: block;
+  }
+  .btn-completar:active { background: var(--accent-mid); }
+
+  .msg {
+    padding: 13px 14px; border-radius: var(--radius);
+    font-size: 15px; margin-top: 14px;
+    font-weight: 500; line-height: 1.4;
+    display: none;
+  }
+  .msg.error   { background: var(--error-bg);   border: 1px solid #fca5a5; color: var(--error);   display: block; }
+  .msg.success { background: var(--success-bg); border: 1px solid #86efac; color: var(--success); display: block; }
+
+  .hidden { display: none !important; }
+  .mt-12 { margin-top: 12px; }
+  .mt-20 { margin-top: 20px; }
+  .required { color: #b91c1c; }
+
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,.4);
+    border-top-color: #fff; border-radius: 50%;
+    animation: spin .7s linear infinite; flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  hr.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+  .success-screen { text-align: center; padding: 32px 8px; }
+  .success-icon { font-size: 52px; margin-bottom: 14px; }
+  .success-screen h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 24px; font-weight: 700; color: var(--accent); margin-bottom: 8px;
+  }
+  .success-screen p { color: var(--muted); font-size: 16px; line-height: 1.5; }
+
+  img, svg, video, canvas, audio, iframe, embed, object { max-width: 100%; }
+</style>
+</head>
+<body>
+
+<div class="topbar"></div>
+
+<header>
+  <div class="badge">Sistema de Registro</div>
+  <h1>Registro de<br>Visitas Técnicas</h1>
+  <p>Completa los datos de tu visita de forma rápida y ordenada</p>
+</header>
+
+<div class="steps" id="stepsBar">
+  <div class="step active" id="st1">
+    <div class="step-dot">1</div>
+    <span class="step-label">Técnico</span>
+  </div>
+  <div class="step-line" id="line1"></div>
+  <div class="step" id="st2">
+    <div class="step-dot">2</div>
+    <span class="step-label">Registro</span>
+  </div>
+  <div class="step-line" id="line2"></div>
+  <div class="step" id="st3">
+    <div class="step-dot">3</div>
+    <span class="step-label">Formulario</span>
+  </div>
+</div>
+
+<!-- PASO 1 -->
+<div class="card" id="paso1">
+  <div class="card-title">Identificación</div>
+  <div class="field">
+    <label>Selecciona tu nombre <span class="required">*</span></label>
+    <select id="selTecnico" disabled>
+      <option value="">— Cargando técnicos… —</option>
+    </select>
+  </div>
+  <button class="btn btn-primary mt-12" id="btnBuscar" onclick="buscarRegistros()">
+    Ver mis registros pendientes
+  </button>
+  <div class="msg" id="msg1"></div>
+</div>
+
+<!-- PASO 2 -->
+<div class="card hidden" id="paso2">
+  <div class="card-title">Registros pendientes</div>
+  <p style="font-size:15px;color:var(--muted);margin-bottom:16px;">
+    Selecciona el registro que deseas completar.
+  </p>
+  <div id="listaRegistros"></div>
+  <div class="msg" id="msg2"></div>
+  <button class="btn btn-ghost mt-20" onclick="volver(1)">← Cambiar técnico</button>
+</div>
+
+<!-- PASO 3 -->
+<div class="card hidden" id="paso3">
+  <div class="card-title">Datos del registro</div>
+  <div class="info-grid" id="infoFijos"></div>
+  <hr class="divider"/>
+  <div class="card-title">Completa la visita</div>
+
+  <div class="field">
+    <label>Tipo de máquina <span class="required">*</span></label>
+    <input type="text" id="tipoMaquina" maxlength="80"
+      placeholder="Ej: Compresor centrífugo de dos etapas"/>
+    <div style="font-size:13px;color:var(--muted);margin-top:5px;">Máximo 10 palabras</div>
+  </div>
+
+  <div class="field">
+    <label>Motivo de la visita <span class="required">*</span></label>
+    <div class="radio-group">
+      <label class="radio-item">
+        <input type="radio" name="motivo" value="Mantenimiento preventivo"/>
+        Mantenimiento preventivo
+      </label>
+      <label class="radio-item">
+        <input type="radio" name="motivo" value="Mantenimiento correctivo"/>
+        Mantenimiento correctivo
+      </label>
+      <label class="radio-item">
+        <input type="radio" name="motivo" value="Inspección"/>
+        Inspección
+      </label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Estado final <span class="required">*</span>
+      <span class="hint">(puedes marcar varios)</span>
+    </label>
+    <div class="check-group">
+      <label class="check-item">
+        <input type="checkbox" id="chkOperativa" value="Máquina operativa"/>
+        Máquina operativa
+      </label>
+      <label class="check-item">
+        <input type="checkbox" id="chkMantenimiento" value="Requiere mantenimiento"/>
+        Requiere mantenimiento
+      </label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>¿Califica para mantenimiento trimestral? <span class="required">*</span></label>
+    <div class="radio-group">
+      <label class="radio-item"><input type="radio" name="califica" value="Sí"/> Sí</label>
+      <label class="radio-item"><input type="radio" name="califica" value="No"/> No</label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Fecha sugerida de mantenimiento <span class="hint">(opcional)</span></label>
+    <input type="month" id="fechaSugerida"/>
+  </div>
+
+  <div class="field">
+    <label>Comentario <span class="hint">(opcional · máx. 50 palabras)</span></label>
+    <textarea id="comentario"
+      placeholder="Observaciones adicionales sobre la visita…"
+      maxlength="400"></textarea>
+    <div style="font-size:13px;color:var(--muted);margin-top:5px;" id="wordCount">
+      0 / 50 palabras
+    </div>
+  </div>
+
+  <div class="msg" id="msg3"></div>
+  <button class="btn btn-primary mt-20" id="btnGuardar" onclick="guardar()">
+    Guardar registro
+  </button>
+  <button class="btn btn-ghost mt-12" onclick="volver(2)">← Volver a la lista</button>
+</div>
+
+<!-- ÉXITO -->
+<div class="card hidden" id="pasoExito">
+  <div class="success-screen">
+    <div class="success-icon">✅</div>
+    <h2>¡Registro guardado!</h2>
+    <p>Los datos de la visita se guardaron correctamente en el sistema.</p>
+    <button class="btn btn-primary mt-20" onclick="reiniciar()">Registrar otra visita</button>
+  </div>
+</div>
+
+<script>
+  // ─────────────────────────────────────────────────────────────
+  //  ÚNICA LÍNEA QUE DEBES CAMBIAR:
+  //  Pega aquí la URL que te da GAS al hacer el Deploy
+  // ─────────────────────────────────────────────────────────────
+  var GAS_URL    = "https://script.google.com/macros/s/TU_ID_DE_DEPLOYMENT_AQUI/exec";
+  var SECRET_KEY = "CAMBIA_ESTO_POR_UNA_CLAVE_SEGURA"; // igual que en Code.gs
+  // ─────────────────────────────────────────────────────────────
+
+  var registroActual = null;
+
+  // Función central de llamada a la API
+  function api(params) {
+    params.secret = SECRET_KEY;
+    var qs = Object.keys(params).map(function(k) {
+      return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
+    }).join("&");
+    return fetch(GAS_URL + "?" + qs).then(function(r) {
+      if (!r.ok) throw new Error("Error HTTP " + r.status);
+      return r.json();
+    });
+  }
+
+  // Carga inicial: obtener técnicos
+  document.addEventListener('DOMContentLoaded', function() {
+    api({ accion: "tecnicos" })
+      .then(function(res) {
+        if (res.ok) {
+          llenarTecnicos(res.data);
+        } else {
+          showMsg('msg1', 'Error al cargar técnicos: ' + res.error, 'error');
+          document.getElementById('selTecnico').disabled = false;
+        }
+      })
+      .catch(function(err) {
+        showMsg('msg1', 'Error de conexión: ' + err.message, 'error');
+        document.getElementById('selTecnico').disabled = false;
+      });
+
+    document.getElementById('comentario').addEventListener('input', contarPalabras);
+  });
+
+  function llenarTecnicos(lista) {
+    var sel = document.getElementById('selTecnico');
+    sel.innerHTML = '<option value="">— Selecciona tu nombre —</option>';
+    for (var i = 0; i < lista.length; i++) {
+      var o = document.createElement('option');
+      o.value = lista[i];
+      o.textContent = lista[i];
+      sel.appendChild(o);
+    }
+    sel.disabled = false;
+  }
+
+  function buscarRegistros() {
+    var tecnico = document.getElementById('selTecnico').value;
+    if (!tecnico) { showMsg('msg1', 'Por favor selecciona tu nombre.', 'error'); return; }
+    clearMsg('msg1');
+    var btn = document.getElementById('btnBuscar');
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Buscando\u2026';
+
+    api({ accion: "pendientes", tecnico: tecnico })
+      .then(function(res) {
+        btn.disabled = false;
+        btn.textContent = 'Ver mis registros pendientes';
+        if (res.ok) {
+          mostrarRegistros(res.data);
+        } else {
+          showMsg('msg1', 'Error: ' + res.error, 'error');
+        }
+      })
+      .catch(function(err) {
+        btn.disabled = false;
+        btn.textContent = 'Ver mis registros pendientes';
+        showMsg('msg1', 'Error de conexión: ' + err.message, 'error');
+      });
+  }
+
+  function mostrarRegistros(registros) {
+    if (!registros.length) {
+      showMsg('msg1', '\uD83C\uDF89 No tienes registros pendientes. \u00A1Todo al d\u00EDa!', 'success');
+      return;
+    }
+    var lista = document.getElementById('listaRegistros');
+    lista.innerHTML = '';
+    for (var i = 0; i < registros.length; i++) {
+      (function(r) {
+        var div = document.createElement('div');
+        div.className = 'reg-card';
+        div.innerHTML =
+          '<div class="reg-card-head">' +
+            '<span class="badge-id">#' + r.id + '</span>' +
+            '<span class="reg-fecha">' + r.fechaInicio + '</span>' +
+          '</div>' +
+          '<div class="reg-card-body">' +
+            '<div class="reg-empresa">' + r.empresa + '</div>' +
+            '<div class="reg-dir">' + r.direccion + '</div>' +
+            '<button class="btn-completar">Completar</button>' +
+          '</div>';
+        div.querySelector('.btn-completar').addEventListener('click', function() {
+          seleccionarRegistro(r);
+        });
+        lista.appendChild(div);
+      })(registros[i]);
+    }
+    setStep(2); show('paso2'); hide('paso1'); scrollTop();
+  }
+
+  function seleccionarRegistro(r) {
+    registroActual = r;
+    var campos = [
+      ['ID', '#' + r.id],
+      ['Empresa / Cliente', r.empresa],
+      ['Fecha de inicio', r.fechaInicio],
+      ['Direcci\u00F3n', r.direccion],
+      ['Tel\u00E9fono', r.telefono]
+    ];
+    var html = '';
+    for (var i = 0; i < campos.length; i++) {
+      html += '<div class="info-cell">' +
+        '<div class="inf-label">' + campos[i][0] + '</div>' +
+        '<div class="inf-val">' + (campos[i][1] || '\u2014') + '</div>' +
+        '</div>';
+    }
+    document.getElementById('infoFijos').innerHTML = html;
+    document.getElementById('tipoMaquina').value = '';
+    document.querySelectorAll('input[name="motivo"]').forEach(function(x) { x.checked = false; });
+    document.getElementById('chkOperativa').checked = false;
+    document.getElementById('chkMantenimiento').checked = false;
+    document.querySelectorAll('input[name="califica"]').forEach(function(x) { x.checked = false; });
+    document.getElementById('fechaSugerida').value = '';
+    document.getElementById('comentario').value = '';
+    contarPalabras();
+    clearMsg('msg3');
+    setStep(3); show('paso3'); hide('paso2'); scrollTop();
+  }
+
+  function guardar() {
+    clearMsg('msg3');
+    var tipoMaquina = document.getElementById('tipoMaquina').value.trim();
+    if (!tipoMaquina) { showMsg('msg3', 'El campo "Tipo de m\u00E1quina" es obligatorio.', 'error'); return; }
+    if (tipoMaquina.split(/\s+/).filter(Boolean).length > 10) {
+      showMsg('msg3', 'El tipo de m\u00E1quina no puede superar 10 palabras.', 'error'); return;
+    }
+    var motivoEl = document.querySelector('input[name="motivo"]:checked');
+    if (!motivoEl) { showMsg('msg3', 'Selecciona el motivo de la visita.', 'error'); return; }
+    var estados = [];
+    if (document.getElementById('chkOperativa').checked)     estados.push('M\u00E1quina operativa');
+    if (document.getElementById('chkMantenimiento').checked) estados.push('Requiere mantenimiento');
+    if (!estados.length) { showMsg('msg3', 'Selecciona al menos un estado final.', 'error'); return; }
+    var calificaEl = document.querySelector('input[name="califica"]:checked');
+    if (!calificaEl) { showMsg('msg3', 'Indica si califica para mantenimiento trimestral.', 'error'); return; }
+    var comentario = document.getElementById('comentario').value.trim();
+    if (comentario.split(/\s+/).filter(Boolean).length > 50) {
+      showMsg('msg3', 'El comentario no puede superar 50 palabras.', 'error'); return;
+    }
+
+    var payload = {
+      fila:          registroActual.fila,
+      tipoMaquina:   tipoMaquina,
+      motivo:        motivoEl.value,
+      estadoFinal:   estados.join(', '),
+      calificaMant:  calificaEl.value,
+      fechaSugerida: document.getElementById('fechaSugerida').value,
+      comentario:    comentario
+    };
+
+    var btn = document.getElementById('btnGuardar');
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Guardando\u2026';
+
+    // Enviamos el payload como string JSON en el querystring
+    api({ accion: "guardar", payload: JSON.stringify(payload) })
+      .then(function(res) {
+        btn.disabled = false;
+        btn.textContent = 'Guardar registro';
+        if (res.ok) {
+          setStep(3, true); hide('paso3'); show('pasoExito'); scrollTop();
+        } else {
+          showMsg('msg3', 'Error al guardar: ' + res.error, 'error');
+        }
+      })
+      .catch(function(err) {
+        btn.disabled = false;
+        btn.textContent = 'Guardar registro';
+        showMsg('msg3', 'Error de conexi\u00F3n: ' + err.message, 'error');
+      });
+  }
+
+  function reiniciar() {
+    hide('pasoExito'); show('paso1'); setStep(1);
+    document.getElementById('selTecnico').value = '';
+    clearMsg('msg1'); scrollTop();
+  }
+  function volver(paso) {
+    if (paso === 1) { hide('paso2'); show('paso1'); setStep(1); }
+    if (paso === 2) { hide('paso3'); show('paso2'); setStep(2); }
+    scrollTop();
+  }
+  function show(id) { document.getElementById(id).classList.remove('hidden'); }
+  function hide(id) { document.getElementById(id).classList.add('hidden'); }
+  function showMsg(id, txt, type) {
+    var el = document.getElementById(id);
+    el.textContent = txt; el.className = 'msg ' + type;
+  }
+  function clearMsg(id) {
+    var el = document.getElementById(id);
+    el.textContent = ''; el.className = 'msg';
+  }
+  function setStep(n, allDone) {
+    for (var i = 1; i <= 3; i++) {
+      var el = document.getElementById('st' + i);
+      el.className = 'step';
+      if (allDone || i < n) el.classList.add('done');
+      else if (i === n) el.classList.add('active');
+    }
+    document.getElementById('line1').className = 'step-line' + (n > 1 || allDone ? ' done' : '');
+    document.getElementById('line2').className = 'step-line' + (n > 2 || allDone ? ' done' : '');
+  }
+  function contarPalabras() {
+    var val = document.getElementById('comentario').value.trim();
+    var count = val ? val.split(/\s+/).filter(Boolean).length : 0;
+    var el = document.getElementById('wordCount');
+    el.textContent = count + ' / 50 palabras';
+    el.style.color = count > 50 ? '#b91c1c' : 'var(--muted)';
+  }
+  function scrollTop() {
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    catch(e) { window.scrollTo(0, 0); }
+  }
+</script>
+</body>
+</html>
